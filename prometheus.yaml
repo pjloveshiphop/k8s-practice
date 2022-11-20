@@ -184,8 +184,7 @@ data:
       tls_config:
         ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         insecure_skip_verify: true
-    - honor_labels: true
-      job_name: kubernetes-service-endpoints
+    - job_name: kubernetes-service-endpoints
       kubernetes_sd_configs:
       - role: endpoints
       relabel_configs:
@@ -193,10 +192,6 @@ data:
         regex: true
         source_labels:
         - __meta_kubernetes_service_annotation_prometheus_io_scrape
-      - action: drop
-        regex: true
-        source_labels:
-        - __meta_kubernetes_service_annotation_prometheus_io_scrape_slow
       - action: replace
         regex: (https?)
         source_labels:
@@ -208,31 +203,27 @@ data:
         - __meta_kubernetes_service_annotation_prometheus_io_path
         target_label: __metrics_path__
       - action: replace
-        regex: (.+?)(?::\d+)?;(\d+)
+        regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
         source_labels:
         - __address__
         - __meta_kubernetes_service_annotation_prometheus_io_port
         target_label: __address__
       - action: labelmap
-        regex: __meta_kubernetes_service_annotation_prometheus_io_param_(.+)
-        replacement: __param_$1
-      - action: labelmap
         regex: __meta_kubernetes_service_label_(.+)
       - action: replace
         source_labels:
         - __meta_kubernetes_namespace
-        target_label: namespace
+        target_label: kubernetes_namespace
       - action: replace
         source_labels:
         - __meta_kubernetes_service_name
-        target_label: service
+        target_label: kubernetes_name
       - action: replace
         source_labels:
         - __meta_kubernetes_pod_node_name
-        target_label: node
-    - honor_labels: true
-      job_name: kubernetes-service-endpoints-slow
+        target_label: kubernetes_node
+    - job_name: kubernetes-service-endpoints-slow
       kubernetes_sd_configs:
       - role: endpoints
       relabel_configs:
@@ -251,29 +242,26 @@ data:
         - __meta_kubernetes_service_annotation_prometheus_io_path
         target_label: __metrics_path__
       - action: replace
-        regex: (.+?)(?::\d+)?;(\d+)
+        regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
         source_labels:
         - __address__
         - __meta_kubernetes_service_annotation_prometheus_io_port
         target_label: __address__
       - action: labelmap
-        regex: __meta_kubernetes_service_annotation_prometheus_io_param_(.+)
-        replacement: __param_$1
-      - action: labelmap
         regex: __meta_kubernetes_service_label_(.+)
       - action: replace
         source_labels:
         - __meta_kubernetes_namespace
-        target_label: namespace
+        target_label: kubernetes_namespace
       - action: replace
         source_labels:
         - __meta_kubernetes_service_name
-        target_label: service
+        target_label: kubernetes_name
       - action: replace
         source_labels:
         - __meta_kubernetes_pod_node_name
-        target_label: node
+        target_label: kubernetes_node
       scrape_interval: 5m
       scrape_timeout: 30s
     - honor_labels: true
@@ -285,8 +273,7 @@ data:
         regex: pushgateway
         source_labels:
         - __meta_kubernetes_service_annotation_prometheus_io_probe
-    - honor_labels: true
-      job_name: kubernetes-services
+    - job_name: kubernetes-services
       kubernetes_sd_configs:
       - role: service
       metrics_path: /probe
@@ -310,12 +297,11 @@ data:
         regex: __meta_kubernetes_service_label_(.+)
       - source_labels:
         - __meta_kubernetes_namespace
-        target_label: namespace
+        target_label: kubernetes_namespace
       - source_labels:
         - __meta_kubernetes_service_name
-        target_label: service
-    - honor_labels: true
-      job_name: kubernetes-pods
+        target_label: kubernetes_name
+    - job_name: kubernetes-pods
       kubernetes_sd_configs:
       - role: pod
       relabel_configs:
@@ -323,46 +309,29 @@ data:
         regex: true
         source_labels:
         - __meta_kubernetes_pod_annotation_prometheus_io_scrape
-      - action: drop
-        regex: true
-        source_labels:
-        - __meta_kubernetes_pod_annotation_prometheus_io_scrape_slow
-      - action: replace
-        regex: (https?)
-        source_labels:
-        - __meta_kubernetes_pod_annotation_prometheus_io_scheme
-        target_label: __scheme__
       - action: replace
         regex: (.+)
         source_labels:
         - __meta_kubernetes_pod_annotation_prometheus_io_path
         target_label: __metrics_path__
       - action: replace
-        regex: (.+?)(?::\d+)?;(\d+)
+        regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
         source_labels:
         - __address__
         - __meta_kubernetes_pod_annotation_prometheus_io_port
         target_label: __address__
       - action: labelmap
-        regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
-        replacement: __param_$1
-      - action: labelmap
         regex: __meta_kubernetes_pod_label_(.+)
       - action: replace
         source_labels:
         - __meta_kubernetes_namespace
-        target_label: namespace
+        target_label: kubernetes_namespace
       - action: replace
         source_labels:
         - __meta_kubernetes_pod_name
-        target_label: pod
-      - action: drop
-        regex: Pending|Succeeded|Failed|Completed
-        source_labels:
-        - __meta_kubernetes_pod_phase
-    - honor_labels: true
-      job_name: kubernetes-pods-slow
+        target_label: kubernetes_pod_name
+    - job_name: kubernetes-pods-slow
       kubernetes_sd_configs:
       - role: pod
       relabel_configs:
@@ -371,39 +340,27 @@ data:
         source_labels:
         - __meta_kubernetes_pod_annotation_prometheus_io_scrape_slow
       - action: replace
-        regex: (https?)
-        source_labels:
-        - __meta_kubernetes_pod_annotation_prometheus_io_scheme
-        target_label: __scheme__
-      - action: replace
         regex: (.+)
         source_labels:
         - __meta_kubernetes_pod_annotation_prometheus_io_path
         target_label: __metrics_path__
       - action: replace
-        regex: (.+?)(?::\d+)?;(\d+)
+        regex: ([^:]+)(?::\d+)?;(\d+)
         replacement: $1:$2
         source_labels:
         - __address__
         - __meta_kubernetes_pod_annotation_prometheus_io_port
         target_label: __address__
       - action: labelmap
-        regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
-        replacement: __param_$1
-      - action: labelmap
         regex: __meta_kubernetes_pod_label_(.+)
       - action: replace
         source_labels:
         - __meta_kubernetes_namespace
-        target_label: namespace
+        target_label: kubernetes_namespace
       - action: replace
         source_labels:
         - __meta_kubernetes_pod_name
-        target_label: pod
-      - action: drop
-        regex: Pending|Succeeded|Failed|Completed
-        source_labels:
-        - __meta_kubernetes_pod_phase
+        target_label: kubernetes_pod_name
       scrape_interval: 5m
       scrape_timeout: 30s
     alerting:
@@ -449,6 +406,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: "prometheus"
   resources:
     requests:
       storage: "2Gi"
@@ -468,6 +426,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: "prometheus"
   resources:
     requests:
       storage: "8Gi"
@@ -847,6 +806,7 @@ metadata:
   name: prometheus-node-exporter
   namespace: monitoring
 spec:
+  clusterIP: None
   ports:
     - name: metrics
       port: 9100
@@ -902,12 +862,13 @@ spec:
       port: 80
       protocol: TCP
       targetPort: 9090
+      nodePort: 30900
   selector:
     component: "server"
     app: prometheus
     release: prometheus
   sessionAffinity: None
-  type: "ClusterIP"
+  type: "NodePort"
 ---
 # Source: prometheus/templates/node-exporter/daemonset.yaml
 apiVersion: apps/v1
@@ -941,7 +902,7 @@ spec:
       serviceAccountName: prometheus-node-exporter
       containers:
         - name: prometheus-node-exporter
-          image: "quay.io/prometheus/node-exporter:v1.3.1"
+          image: "prom/node-exporter:v1.0.1"
           imagePullPolicy: "IfNotPresent"
           args:
             - --path.procfs=/host/proc
@@ -1076,7 +1037,7 @@ spec:
       serviceAccountName: prometheus-alertmanager
       containers:
         - name: prometheus-alertmanager
-          image: "quay.io/prometheus/alertmanager:v0.24.0"
+          image: "prom/alertmanager:v0.21.0"
           imagePullPolicy: "IfNotPresent"
           env:
             - name: POD_IP
@@ -1107,7 +1068,7 @@ spec:
               mountPath: "/data"
               subPath: ""
         - name: prometheus-alertmanager-configmap-reload
-          image: "jimmidyson/configmap-reload:v0.5.0"
+          image: "jimmidyson/configmap-reload:v0.4.0"
           imagePullPolicy: "IfNotPresent"
           args:
             - --volume-dir=/etc/config
@@ -1162,7 +1123,7 @@ spec:
       serviceAccountName: prometheus-pushgateway
       containers:
         - name: prometheus-pushgateway
-          image: "prom/pushgateway:v1.4.3"
+          image: "prom/pushgateway:v1.2.0"
           imagePullPolicy: "IfNotPresent"
           securityContext:
             {}
@@ -1219,7 +1180,7 @@ spec:
       serviceAccountName: prometheus-server
       containers:
         - name: prometheus-server-configmap-reload
-          image: "jimmidyson/configmap-reload:v0.5.0"
+          image: "jimmidyson/configmap-reload:v0.4.0"
           imagePullPolicy: "IfNotPresent"
           args:
             - --volume-dir=/etc/config
@@ -1232,7 +1193,7 @@ spec:
               readOnly: true
 
         - name: prometheus-server
-          image: "quay.io/prometheus/prometheus:v2.39.1"
+          image: "prom/prometheus:v2.20.1"
           imagePullPolicy: "IfNotPresent"
           args:
             - --storage.tsdb.retention.time=15d
@@ -1250,7 +1211,7 @@ spec:
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 5
-            timeoutSeconds: 4
+            timeoutSeconds: 30
             failureThreshold: 3
             successThreshold: 1
           livenessProbe:
@@ -1260,7 +1221,7 @@ spec:
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 15
-            timeoutSeconds: 10
+            timeoutSeconds: 30
             failureThreshold: 3
             successThreshold: 1
           resources:
