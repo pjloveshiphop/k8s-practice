@@ -6,10 +6,11 @@ metadata:
   labels:
     name: node-exporter
 spec:
+  selector: {}
   template:
     metadata:
       labels:
-        app: node-exporter
+        daemon: node-exporter
       name: node-exporter
       annotations:
          prometheus.io/scrape: "true"
@@ -24,7 +25,7 @@ spec:
               protocol: TCP
           resources:
             requests:
-              cpu: 0.15
+              cpu: "0.15"
           securityContext:
             privileged: true
           image: prom/node-exporter:v0.15.2
