@@ -6,12 +6,13 @@ metadata:
   labels:
     name: node-exporter
 spec:
-  selector: {}
+  selector:
+    matchLabels:
+      name: node-exporter
   template:
     metadata:
       labels:
-        daemon: node-exporter
-      name: node-exporter
+        name: node-exporter
       annotations:
          prometheus.io/scrape: "true"
          prometheus.io/port: "9100"
