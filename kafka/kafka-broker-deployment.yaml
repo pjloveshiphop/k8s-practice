@@ -31,3 +31,4 @@ spec:
         name: kafka-broker
         ports:
         - containerPort: 9092
+          protocol: TCP
