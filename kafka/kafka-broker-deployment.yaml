@@ -29,5 +29,5 @@ spec:
         image: wurstmeister/kafka
         imagePullPolicy: IfNotPresent
         name: kafka-broker
-      ports:
-      - containerPort: 9092
+        ports:
+        - containerPort: 9092
