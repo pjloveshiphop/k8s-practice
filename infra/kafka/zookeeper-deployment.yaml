@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: zookeeper
+  namespace: kafka
   labels:
     app: zookeeper
-  namespace: kafka
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: zookeeper
@@ -17,7 +17,15 @@ spec:
     spec:
       containers:
       - name: zookeeper
-        image: wurstmeister/zookeeper
-        imagePullPolicy: IfNotPresent
+        image: zookeeper:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         ports:
         - containerPort: 2181
+        env:
+        - name: ZOOKEEPER_ID
+          value: "1"
+        - name: ZOOKEEPER_SERVER_1
+          value: zookeeper

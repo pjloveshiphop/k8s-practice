@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-broker
+  namespace: kafka
+  labels:
+    app: kafka-broker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kafka-broker
+      id: "0"
+  template:
+    metadata:
+      labels:
+        app: kafka-broker
+        id: "0"
+    spec:
+      containers:
+      - name: kafka-broker
+        image: bitnami/kafka:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: <Port>
