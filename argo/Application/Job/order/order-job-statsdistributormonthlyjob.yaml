@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    category: job
+  name: order-job-statsdistributormonthlyjob
+  namespace: argocd
+spec:
+  destination:
+    namespace: order-batch
+    server: https://kubernetes.default.svc
+  project: dev-order
+  source:
+    path: universe/batch/order-job/order-job-statsdistributormonthlyjob
+    repoURL: https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/dev-argocd-k8s-config
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
