@@ -11,7 +11,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: /
+    path: batch
     repoURL: https://github.com/pjloveshiphop/k8s-practice.git
     targetRevision: HEAD
   syncPolicy:
