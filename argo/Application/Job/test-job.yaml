@@ -11,7 +11,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: k8s-practice
+    path: k8s-practice/test-job.yaml
     repoURL: https://github.com/pjloveshiphop/k8s-practice.git
     targetRevision: HEAD
   syncPolicy:
